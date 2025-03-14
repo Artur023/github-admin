@@ -8,6 +8,20 @@ const rootReducer = combineReducers({
   repos: reposReducer,
 });
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+const persistedCredentials = JSON.parse(localStorage.getItem('githubCredentials')) || {
+  login: '',
+  token: ''
+};
+
+const preloadedState = {
+  credentials: persistedCredentials,
+};
+
+const store = createStore(rootReducer, preloadedState, applyMiddleware(thunk));
+
+store.subscribe(() => {
+  const state = store.getState();
+  localStorage.setItem('githubCredentials', JSON.stringify(state.credentials));
+});
 
 export default store;
