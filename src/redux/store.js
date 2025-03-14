@@ -10,15 +10,18 @@ const rootReducer = combineReducers({
 
 const persistedCredentials = JSON.parse(localStorage.getItem('githubCredentials')) || {
   login: '',
-  token: ''
+  token: '',
 };
 
 const preloadedState = {
   credentials: persistedCredentials,
 };
 
-const store = createStore(rootReducer, preloadedState, applyMiddleware(thunk));
-
+const store = createStore(
+  rootReducer,
+  preloadedState,
+  applyMiddleware(thunk),
+);
 store.subscribe(() => {
   const state = store.getState();
   localStorage.setItem('githubCredentials', JSON.stringify(state.credentials));

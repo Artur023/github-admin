@@ -1,5 +1,4 @@
 const initialState = {
-  repos: [],
   loading: false,
   error: null,
 };
