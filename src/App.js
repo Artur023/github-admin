@@ -1,13 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
-import store from "./redux/store";
+import React, {useState} from 'react';
+import CredentialsForm from './components/CredentialsForm';
+import RepoList from './components/RepoList';
 
-function App() {
+const App = () => {
+  const [screen, setScreen] = useState('credentials');
+
   return (
-    <div className="App">
-      {console.log(store)}
+    <div>
+      <nav style={{marginBottom: '20px'}}>
+        <button onClick={() => setScreen('credentials')}>Настройка GitHub</button>
+        <button onClick={() => setScreen('repos')}>Список репозиториев</button>
+      </nav>
+      {screen === 'credentials' && <CredentialsForm/>}
+      {screen === 'repos' && <RepoList/>}
     </div>
   );
-}
+};
 
 export default App;
