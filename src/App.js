@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import CredentialsForm from './components/CredentialsForm';
 import RepoList from './components/RepoList';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const [screen, setScreen] = useState('credentials');
@@ -14,6 +16,7 @@ const App = () => {
       </nav>
       {screen === 'credentials' && <CredentialsForm/>}
       {screen === 'repos' && <RepoList/>}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
