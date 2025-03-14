@@ -2,12 +2,14 @@ import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {fetchRepos, deleteRepo, updateRepo, createRepo} from '../redux/reposActions';
 import RepoForm from './RepoForm';
+import RepoDetailModal from './RepoDetailModal';
 
 const RepoList = () => {
   const dispatch = useDispatch();
   const {repos, loading, error} = useSelector((state) => state.repos);
   const {login} = useSelector((state) => state.credentials);
 
+  const [viewRepo, setViewRepo] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editRepo, setEditRepo] = useState(null);
 
@@ -36,13 +38,13 @@ const RepoList = () => {
   };
 
   const handleViewRepo = (repo) => {
-    alert(JSON.stringify(repo, null, 2));
+    setViewRepo(repo);
   };
 
   return (
     <div>
       <h2>Список репозиториев</h2>
-      <button onClick={() => setShowCreateForm(true)}>Создать репозиторий</button>
+      {showCreateForm && <button onClick={() => setShowCreateForm(true)}>Создать репозиторий</button>}
 
       {showCreateForm && (
         <div>
@@ -85,6 +87,7 @@ const RepoList = () => {
       ) : (
         !loading && <p>Репозитории не найдены</p>
       )}
+      {viewRepo && <RepoDetailModal repo={viewRepo} onClose={() => setViewRepo(null)}/>}
     </div>
   );
 };

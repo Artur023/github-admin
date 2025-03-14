@@ -10,7 +10,7 @@ const CredentialsForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(setCredentials(login, token));
-    alert('Данные сохранены');
+    alert(`Данные сохранены ${login}, ${token}`);
   };
 
   return (

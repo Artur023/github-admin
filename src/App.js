@@ -7,6 +7,7 @@ const App = () => {
 
   return (
     <div>
+      {console.log('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')}
       <nav style={{marginBottom: '20px'}}>
         <button onClick={() => setScreen('credentials')}>Настройка GitHub</button>
         <button onClick={() => setScreen('repos')}>Список репозиториев</button>
