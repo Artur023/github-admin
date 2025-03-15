@@ -14,10 +14,12 @@ const RepoList = () => {
   const [editRepo, setEditRepo] = useState(null);
 
   useEffect(() => {
-    if (login) {
+    if (login && repos.length === 0) {
       dispatch(fetchRepos());
     }
-  }, [dispatch, login]);
+  }, [dispatch, login, repos.length]);
+
+
 
   const handleCreateRepo = (repoData) => {
     dispatch(createRepo(repoData));
@@ -40,7 +42,13 @@ const RepoList = () => {
   const handleViewRepo = (repo) => {
     setViewRepo(repo);
   };
-
+  if (!login) {
+    return (
+      <div>
+        <p>Пожалуйста, войдите, чтобы просмотреть репозитории.</p>
+      </div>
+    );
+  }
   return (
     <div>
       <h2>Список репозиториев</h2>

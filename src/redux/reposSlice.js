@@ -1,6 +1,7 @@
 const initialState = {
   loading: false,
   error: null,
+  repos: [],
 };
 
 export const fetchReposStart = () => ({ type: 'FETCH_REPOS_START' });
