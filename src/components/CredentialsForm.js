@@ -1,18 +1,30 @@
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {setCredentials} from '../redux/credentialsSlice';
+import {toast} from "react-toastify";
 
 const CredentialsForm = () => {
   const dispatch = useDispatch();
+  const credentials = useSelector(state => state.credentials);
   const [login, setLogin] = useState('');
   const [token, setToken] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(setCredentials(login, token));
-    alert(`Данные сохранены ${login}, ${token}`);
+    toast.success(`Вы успешно вошли ${login} `);
   };
-
+  if (credentials.login && credentials.token) {
+    return (
+      <div>
+        <h2>Вы успешно вошли!</h2>
+        <p>Логин: {credentials.login}</p>
+        <button onClick={() => dispatch(setCredentials('', ''))}>
+          Сменить учётные данные
+        </button>
+      </div>
+    );
+  }
   return (
     <form onSubmit={handleSubmit}>
       <div>
