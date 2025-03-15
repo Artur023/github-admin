@@ -3,18 +3,20 @@ const initialState = {
   error: null,
   repos: [],
 };
-
-export const fetchReposStart = () => ({ type: 'FETCH_REPOS_START' });
-export const fetchReposSuccess = (repos) => ({ type: 'FETCH_REPOS_SUCCESS', payload: repos });
-export const fetchReposError = (error) => ({ type: 'FETCH_REPOS_ERROR', payload: error });
+const FETCH_REPOS_START = 'FETCH_REPOS_START';
+const FETCH_REPOS_SUCCESS = 'FETCH_REPOS_SUCCESS';
+const FETCH_REPOS_ERROR = 'FETCH_REPOS_ERROR';
+export const fetchReposStart = () => ({type: FETCH_REPOS_START});
+export const fetchReposSuccess = (repos) => ({type: FETCH_REPOS_SUCCESS, payload: repos});
+export const fetchReposError = (error) => ({type: FETCH_REPOS_ERROR, payload: error});
 
 const reposReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'FETCH_REPOS_START':
+    case FETCH_REPOS_START:
       return { ...state, loading: true, error: null };
-    case 'FETCH_REPOS_SUCCESS':
+    case FETCH_REPOS_SUCCESS:
       return { ...state, repos: action.payload, loading: false };
-    case 'FETCH_REPOS_ERROR':
+    case FETCH_REPOS_ERROR:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;
