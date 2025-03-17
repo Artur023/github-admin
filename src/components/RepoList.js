@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {fetchRepos, deleteRepo, updateRepo, createRepo} from '../redux/reposActions';
 import RepoItem from './RepoItem';
@@ -15,7 +15,7 @@ const RepoList = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editRepo, setEditRepo] = useState(null);
   const [viewRepo, setViewRepo] = useState(null);
-  const [sortOption, setSortOption] = useState('alphabetical');
+  const [sortOption, setSortOption] = useState('date');
 
   useEffect(() => {
     if (login && repos.length === 0) {
@@ -45,12 +45,15 @@ const RepoList = () => {
     }
   };
 
-  const sortedRepos = [...repos];
-  if (sortOption === 'alphabetical') {
-    sortedRepos.sort((a, b) => a.name.localeCompare(b.name));
-  } else if (sortOption === 'date') {
-    sortedRepos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-  }
+  const sortedRepos = useMemo(() => {
+    const sorted = [...repos];
+    if (sortOption === 'alphabetical') {
+      sorted.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOption === 'date') {
+      sorted.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    }
+    return sorted;
+  }, [repos, sortOption]);
 
   if (!login) {
     return <p>Пожалуйста, войдите, чтобы просмотреть репозитории.</p>;

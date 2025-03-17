@@ -10,7 +10,7 @@ export const fetchRepos = () => {
     githubApi.fetchRepos(login)
       .then(response => {
         dispatch(fetchReposSuccess(response.data));
-        toast.success('Репозитории спешно загружены!');
+        toast.success('Репозитории успешно загружены!');
       })
       .catch(error => {
         dispatch(fetchReposError(error.message));
