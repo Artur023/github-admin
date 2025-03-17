@@ -14,10 +14,10 @@ const App = () => {
     <div className="container">
       {console.log('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')}
       <nav>
-        <button onClick={() => setScreen('credentials')}>
+        <button className={'navButton'} onClick={() => setScreen('credentials')}>
           Настройка GitHub
         </button>
-        <button onClick={() => setScreen('repos')}>
+        <button className={'navButton'} onClick={() => setScreen('repos')}>
           Список репозиториев
         </button>
       </nav>

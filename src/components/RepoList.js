@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {fetchRepos, deleteRepo, updateRepo, createRepo} from '../redux/reposActions';
-import RepoForm from './RepoForm';
+import RepoItem from './RepoItem';
+import RepoSortOptions from './RepoSortOptions';
 import RepoDetailModal from './RepoDetailModal';
-import {toast} from 'react-toastify';
+import RepoEditModal from './RepoEditModal';
+import RepoForm from './RepoForm';
 
 const RepoList = () => {
   const dispatch = useDispatch();
@@ -13,6 +15,7 @@ const RepoList = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editRepo, setEditRepo] = useState(null);
   const [viewRepo, setViewRepo] = useState(null);
+  const [sortOption, setSortOption] = useState('alphabetical');
 
   useEffect(() => {
     if (login && repos.length === 0) {
@@ -24,23 +27,12 @@ const RepoList = () => {
     dispatch(fetchRepos(login));
   };
 
-  // Поскольку мы работаем только с собственным аккаунтом, isOwn всегда true
-  const isOwn = true;
-
   const handleCreateRepo = (repoData) => {
-    if (!isOwn) {
-      toast.error("Создавать репозитории можно только для своего аккаунта.");
-      return;
-    }
     dispatch(createRepo(repoData));
     setShowCreateForm(false);
   };
 
   const handleUpdateRepo = (repoData) => {
-    if (!isOwn) {
-      toast.error("Редактировать репозитории можно только для своего аккаунта.");
-      return;
-    }
     if (editRepo) {
       dispatch(updateRepo(editRepo.name, repoData));
       setEditRepo(null);
@@ -48,81 +40,67 @@ const RepoList = () => {
   };
 
   const handleDeleteRepo = (repoName) => {
-    if (!isOwn) {
-      toast.error("Удалять репозитории можно только для своего аккаунта.");
-      return;
-    }
     if (window.confirm(`Вы уверены, что хотите удалить репозиторий ${repoName}?`)) {
       dispatch(deleteRepo(repoName));
     }
   };
 
+  const sortedRepos = [...repos];
+  if (sortOption === 'alphabetical') {
+    sortedRepos.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortOption === 'date') {
+    sortedRepos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  }
+
   if (!login) {
-    return (
-      <div>
-        <p>Пожалуйста, войдите, чтобы просмотреть репозитории.</p>
-      </div>
-    );
+    return <p>Пожалуйста, войдите, чтобы просмотреть репозитории.</p>;
   }
 
   return (
     <div>
       <h2>Список репозиториев</h2>
-      <div style={{marginBottom: '20px'}}>
-        <span style={{marginRight: '10px', color: 'green'}}>
+      <div className="repo-header">
+        <span className="repo-account" style={{color: 'green'}}>
           Ваш аккаунт: {login}
         </span>
         <button onClick={handleReload}>Обновить список</button>
       </div>
 
-      {isOwn && (
-        <button onClick={() => setShowCreateForm(true)}>Создать репозиторий</button>
-      )}
+      <RepoSortOptions sortOption={sortOption} onSortChange={setSortOption}/>
 
       {showCreateForm && (
-        <div>
-          <h3>Создать репозиторий</h3>
-          <RepoForm
-            mode="create"
-            onSubmit={handleCreateRepo}
-            onCancel={() => setShowCreateForm(false)}
-          />
-        </div>
-      )}
-
-      {editRepo && (
-        <div>
-          <h3>Редактировать репозиторий: {editRepo.name}</h3>
-          <RepoForm
-            mode="update"
-            initialData={editRepo}
-            onSubmit={handleUpdateRepo}
-            onCancel={() => setEditRepo(null)}
-          />
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Создать репозиторий</h3>
+            <RepoForm mode="create" onSubmit={handleCreateRepo}
+                      onCancel={() => setShowCreateForm(false)}/>
+          </div>
         </div>
       )}
 
       {loading && <p>Загрузка...</p>}
       {error && <p style={{color: 'red'}}>Ошибка: {error}</p>}
-      {repos.length > 0 ? (
-        <ul>
-          {repos.map((repo) => (
-            <li key={repo.id} style={{marginBottom: '10px'}}>
-              <strong>{repo.name}</strong> – {repo.description}
-              <div>
-                <button onClick={() => setViewRepo(repo)}>Просмотр</button>
-                <button onClick={() => setEditRepo(repo)}>Редактировать</button>
-                <button onClick={() => handleDeleteRepo(repo.name)}>Удалить</button>
-              </div>
-            </li>
+
+      {sortedRepos.length > 0 ? (
+        <ul className="repo-list">
+          {sortedRepos.map((repo) => (
+            <RepoItem
+              key={repo.id}
+              repo={repo}
+              onView={setViewRepo}
+              onEdit={setEditRepo}
+              onDelete={handleDeleteRepo}
+            />
           ))}
         </ul>
       ) : (
         !loading && <p>Репозитории не найдены</p>
       )}
 
-      {viewRepo && (
-        <RepoDetailModal repo={viewRepo} onClose={() => setViewRepo(null)}/>
+      {viewRepo && <RepoDetailModal repo={viewRepo} onClose={() => setViewRepo(null)}/>}
+      {editRepo && (
+        <RepoEditModal repo={editRepo} onClose={() => setEditRepo(null)}
+                       onSubmit={handleUpdateRepo}/>
       )}
     </div>
   );
