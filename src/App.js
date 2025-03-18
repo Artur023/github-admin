@@ -12,7 +12,6 @@ const App = () => {
 
   return (
     <div className="container">
-      {console.log('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')}
       <nav>
         <button className={'navButton'} onClick={() => setScreen('credentials')}>
           Настройка GitHub
