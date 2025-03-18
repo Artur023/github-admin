@@ -6,9 +6,17 @@ const initialState = {
   repos: [],
 };
 
-export const fetchReposStart = () => ({type: FETCH_REPOS_START});
-export const fetchReposSuccess = (repos) => ({type: FETCH_REPOS_SUCCESS, payload: repos});
-export const fetchReposError = (error) => ({type: FETCH_REPOS_ERROR, payload: error});
+export const fetchReposStart = () => ({
+  type: FETCH_REPOS_START
+});
+export const fetchReposSuccess = (repos) => ({
+  type: FETCH_REPOS_SUCCESS,
+  payload: repos
+});
+export const fetchReposError = (error) => ({
+  type: FETCH_REPOS_ERROR,
+  payload: error
+});
 
 const reposReducer = (state = initialState, action) => {
   switch (action.type) {

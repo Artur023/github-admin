@@ -1,4 +1,3 @@
-// src/components/RepoItem.js
 import React from 'react';
 import { ComputerDesktopIcon } from '@heroicons/react/24/outline';
 

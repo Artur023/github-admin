@@ -49,9 +49,10 @@ export const updateRepo = (repoName, repoData) => {
 
     try {
       await githubApi.updateRepo(login, repoName, repoData);
-      toast.info('Репозиторий обновляется', {autoClose: 10000});
+      toast.info(`Репозиторий ${repoName} обновляется`, {autoClose: 30000});
       setTimeout(() => {
         dispatch(fetchRepos(login));
+        toast.success('Репозиторий  обновлён', {autoClose: 1000});
       }, 30000);
     } catch (error) {
       toast.error("Ошибка при обновлении репозитория: " + error.message);

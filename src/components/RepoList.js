@@ -6,7 +6,6 @@ import RepoSortOptions from './RepoSortOptions';
 import RepoDetailModal from './RepoDetailModal';
 import RepoEditModal from './RepoEditModal';
 import RepoForm from './RepoForm';
-import { toast } from 'react-toastify';
 
 const RepoList = () => {
   const dispatch = useDispatch();
