@@ -23,7 +23,6 @@ const RepoList = () => {
     }
   }, [dispatch, login, repos.length]);
 
-  // Мемоизируем отсортированный список
   const sortedRepos = useMemo(() => {
     const sorted = [...repos];
     if (sortOption === 'alphabetical') {
@@ -59,12 +58,14 @@ const RepoList = () => {
   return (
     <div>
       <h2>Список репозиториев</h2>
-      <div className="repo-header" style={{ marginBottom: '20px' }}>
-        <span style={{ marginRight: '10px', color: 'green' }}>Ваш аккаунт: {login}</span>
+      <div className="repo-header" style={{marginBottom: '20px'}}>
+        <span style={{marginRight: '10px', color: 'green'}}>Ваш аккаунт: {login}</span>
       </div>
 
-      <RepoSortOptions sortOption={sortOption} onSortChange={setSortOption} />
-
+      <RepoSortOptions sortOption={sortOption} onSortChange={setSortOption}/>
+      <button className={'navButton'} onClick={() => setShowCreateForm(true)}>
+        Создать репозиторий
+      </button>
       {showCreateForm && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -79,7 +80,7 @@ const RepoList = () => {
       )}
 
       {loading && <p>Загрузка...</p>}
-      {error && <p style={{ color: 'red' }}>Ошибка: {error}</p>}
+      {error && <p style={{color: 'red'}}>Ошибка: {error}</p>}
       {sortedRepos.length > 0 ? (
         <ul className="repo-list">
           {sortedRepos.map((repo) => (
@@ -97,7 +98,7 @@ const RepoList = () => {
       )}
 
       {viewRepo && (
-        <RepoDetailModal repo={viewRepo} onClose={() => setViewRepo(null)} />
+        <RepoDetailModal repo={viewRepo} onClose={() => setViewRepo(null)}/>
       )}
       {editRepo && (
         <RepoEditModal

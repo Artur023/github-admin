@@ -68,7 +68,7 @@ const CredentialsForm = () => {
           type="text"
           value={login}
           onChange={(e) => setLogin(e.target.value)}
-          placeholder="Введите логин или оставьте пустым"
+          placeholder="Введите логин"
         />
       </div>
       <button type="submit" disabled={loading}>
