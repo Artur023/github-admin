@@ -1,8 +1,9 @@
+import {SET_CREDENTIALS} from "../constants";
+
 const initialState = {
   login: '',
   token: '',
 };
-const SET_CREDENTIALS = 'SET_CREDENTIALS';
 export const setCredentials = (login, token) => ({
   type: SET_CREDENTIALS,
   payload: { login, token },

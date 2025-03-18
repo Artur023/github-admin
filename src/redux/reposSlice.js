@@ -1,11 +1,11 @@
+import {FETCH_REPOS_ERROR, FETCH_REPOS_START, FETCH_REPOS_SUCCESS} from "../constants";
+
 const initialState = {
   loading: false,
   error: null,
   repos: [],
 };
-const FETCH_REPOS_START = 'FETCH_REPOS_START';
-const FETCH_REPOS_SUCCESS = 'FETCH_REPOS_SUCCESS';
-const FETCH_REPOS_ERROR = 'FETCH_REPOS_ERROR';
+
 export const fetchReposStart = () => ({type: FETCH_REPOS_START});
 export const fetchReposSuccess = (repos) => ({type: FETCH_REPOS_SUCCESS, payload: repos});
 export const fetchReposError = (error) => ({type: FETCH_REPOS_ERROR, payload: error});

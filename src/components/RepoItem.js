@@ -1,9 +1,10 @@
+// src/components/RepoItem.js
 import React from 'react';
 import { ComputerDesktopIcon } from '@heroicons/react/24/outline';
 
 const RepoItem = ({ repo, onView, onEdit, onDelete }) => {
   return (
-    <li className="repo-item">
+    <li className="repo-item" style={{backgroundColor: repo.isUpdating ? '#fffacd' : '#fff'}}>
       <ComputerDesktopIcon className="repo-icon" />
       <div className="repo-info">
         <strong>{repo.name}</strong> – {repo.description}
