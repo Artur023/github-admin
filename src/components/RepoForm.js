@@ -1,50 +1,85 @@
-import React, { useState } from 'react';
+// src/components/RepoForm.js
+import React from 'react';
+import { Box, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
-const RepoForm = ({ initialData = {}, onSubmit, onCancel, mode = 'create' }) => {
-  const [name, setName] = useState(initialData.name || '');
-  const [description, setDescription] = useState(initialData.description || '');
-  const [visibility, setVisibility] = useState(initialData.visibility || 'public');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (mode === 'create' && !name.trim()) {
-      alert("Имя репозитория обязательно");
-      return;
-    }
-    onSubmit({ name, description, visibility });
-  };
+const RepoForm = ({ mode, initialData = {}, onSubmit, onCancel }) => {
+  const formik = useFormik({
+    initialValues: {
+      name: initialData.name || '',
+      description: initialData.description || '',
+      visibility: initialData.visibility || 'public',
+    },
+    onSubmit: (values) => {
+      const data = {
+        description: values.description,
+        visibility: values.visibility,
+      };
+      if (mode === 'create') {
+        data.name = values.name;
+      }
+      onSubmit(data);
+    },
+    validationSchema: Yup.object({
+      name:
+        mode === 'create'
+          ? Yup.string().trim().required('Имя репозитория обязательно')
+          : Yup.string().trim(),
+    }),
+  });
 
   return (
-    <form onSubmit={handleSubmit} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
+    <Box
+      component="form"
+      onSubmit={formik.handleSubmit}
+      sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+    >
       {mode === 'create' && (
-        <div>
-          <label>Имя репозитория:</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-      )}
-      <div>
-        <label>Описание:</label>
-        <input
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+        <TextField
+          fullWidth
+          id="name"
+          name="name"
+          label="Имя репозитория"
+          value={formik.values.name}
+          onChange={formik.handleChange}
+          error={formik.touched.name && Boolean(formik.errors.name)}
+          helperText={formik.touched.name && formik.errors.name}
+          required
         />
-      </div>
-      <div>
-        <label>Видимость:</label>
-        <select value={visibility} onChange={(e) => setVisibility(e.target.value)}>
-          <option value="public">Публичный</option>
-          <option value="private">Приватный</option>
-        </select>
-      </div>
-      <button type="submit">{mode === 'create' ? 'Создать' : 'Обновить'}</button>
-      <button type="button" onClick={onCancel}>Отмена</button>
-    </form>
+      )}
+      <TextField
+        fullWidth
+        id="description"
+        name="description"
+        label="Описание"
+        value={formik.values.description}
+        onChange={formik.handleChange}
+      />
+      <FormControl fullWidth>
+        <InputLabel id="visibility-label">Видимость</InputLabel>
+        <Select
+          labelId="visibility-label"
+          id="visibility"
+          name="visibility"
+          value={formik.values.visibility}
+          label="Видимость"
+          onChange={formik.handleChange}
+        >
+          <MenuItem value="public">Публичный</MenuItem>
+          <MenuItem value="private">Приватный</MenuItem>
+        </Select>
+      </FormControl>
+      <Box sx={{ display: 'flex', gap: 1 }}>
+        <Button type="submit" variant="contained">
+          {mode === 'create' ? 'Создать' : 'Обновить'}
+        </Button>
+        <Button variant="outlined" onClick={onCancel}>
+          Отмена
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
