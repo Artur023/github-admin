@@ -8,11 +8,12 @@ export const setAuth = (token) => {
 };
 
 const githubApi = {
-  fetchRepos: (login) => axios.get(`/users/${login}/repos`),
+  fetchRepos: (login) => axios.get('/user/repos?per_page=100'),
   createRepo: (data) => axios.post('/user/repos', data),
-  updateRepo: (login, repoName, data) => axios.patch(`/repos/${login}/${repoName}`, data),
-  deleteRepo: (login, repoName) => axios.delete(`/repos/${login}/${repoName}`),
-  viewRepo: (login, repoName) => axios.get(`/repos/${login}/${repoName}`),
+  updateRepo: (login, repoName, data) =>
+    axios.patch(`/repos/${login}/${repoName}`, data),
+  deleteRepo: (login, repoName) =>
+    axios.delete(`/repos/${login}/${repoName}`),
 };
 
 export default githubApi;
