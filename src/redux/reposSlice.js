@@ -25,7 +25,6 @@ const reposSlice = createSlice({
     },
     removeRepo(state, action) {
       state.repos = state.repos.filter(repo => {
-        console.log(repo.name, action.payload)
         return repo.name !== action.payload
       });
     },

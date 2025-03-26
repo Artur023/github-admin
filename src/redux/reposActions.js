@@ -21,7 +21,7 @@ export const fetchRepos = createAsyncThunk(
 export const createRepo = createAsyncThunk(
   'repos/createRepo',
   async (repoData, { getState, dispatch, rejectWithValue }) => {
-    const { token, login } = getState().credentials;
+    const { token } = getState().credentials;
     setAuth(token);
     try {
       const response = await githubApi.createRepo(repoData);
