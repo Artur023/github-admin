@@ -1,34 +1,56 @@
-import {FETCH_REPOS_ERROR, FETCH_REPOS_START, FETCH_REPOS_SUCCESS} from "../constants";
+import {createSlice} from '@reduxjs/toolkit';
+import {fetchRepos} from './reposActions';
 
 const initialState = {
+  repos: [],
   loading: false,
   error: null,
-  repos: [],
 };
 
-export const fetchReposStart = () => ({
-  type: FETCH_REPOS_START
-});
-export const fetchReposSuccess = (repos) => ({
-  type: FETCH_REPOS_SUCCESS,
-  payload: repos
-});
-export const fetchReposError = (error) => ({
-  type: FETCH_REPOS_ERROR,
-  payload: error
+const reposSlice = createSlice({
+  name: 'repos',
+  initialState,
+  reducers: {
+    setRepos(state, action) {
+      state.repos = action.payload;
+    },
+    addRepo(state, action) {
+      state.repos.push(action.payload);
+    },
+    updateRepoLocal(state, action) {
+      const index = state.repos.findIndex(repo => repo.id === action.payload.id);
+      if (index !== -1) {
+        state.repos[index] = {...state.repos[index], ...action.payload};
+      }
+    },
+    removeRepo(state, action) {
+      state.repos = state.repos.filter(repo => {
+        console.log(repo.name, action.payload)
+        return repo.name !== action.payload
+      });
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchRepos.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchRepos.fulfilled, (state, action) => {
+        state.loading = false;
+        state.repos = action.payload;
+      })
+      .addCase(fetchRepos.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Ошибка загрузки репозиториев';
+      });
+  },
 });
 
-const reposReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case FETCH_REPOS_START:
-      return { ...state, loading: true, error: null };
-    case FETCH_REPOS_SUCCESS:
-      return { ...state, repos: action.payload, loading: false };
-    case FETCH_REPOS_ERROR:
-      return { ...state, loading: false, error: action.payload };
-    default:
-      return state;
-  }
-};
-
-export default reposReducer;
+export const {
+  setRepos,
+  addRepo,
+  updateRepoLocal,
+  removeRepo
+} = reposSlice.actions;
+export default reposSlice.reducer;

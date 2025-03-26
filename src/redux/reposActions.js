@@ -1,79 +1,65 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import githubApi, { setAuth } from '../api/githubApi';
-import { fetchReposStart, fetchReposSuccess, fetchReposError } from './reposSlice';
 import { toast } from 'react-toastify';
-import {FETCH_REPOS_SUCCESS} from "../constants";
+import { addRepo, updateRepoLocal, removeRepo } from './reposSlice';
 
-export const fetchRepos = () => {
-  return (dispatch, getState) => {
-    dispatch(fetchReposStart());
-    const { credentials: { login, token } } = getState();
+export const fetchRepos = createAsyncThunk(
+  'repos/fetchRepos',
+  async (login, { getState, rejectWithValue }) => {
+    const { token } = getState().credentials;
     setAuth(token);
-    githubApi.fetchRepos(login)
-      .then(response => {
-        dispatch(fetchReposSuccess(response.data));
-      })
-      .catch(error => {
-        dispatch(fetchReposError(error.message));
-        toast.error(`Ошибка загрузки репозиториев: ${error.message}`);
-      });
-  };
-};
-
-export const createRepo = (repoData) => {
-  return (dispatch, getState) => {
-    const { credentials: { token } } = getState();
-    setAuth(token);
-    githubApi.createRepo(repoData)
-      .then(() => {
-        dispatch(fetchRepos());
-        toast.success('Репозиторий успешно создан!');
-      })
-      .catch(error => {
-        toast.error("Ошибка при создании репозитория: " + error.message);
-      });
-  };
-};
-
-export const updateRepo = (repoName, repoData) => {
-  return async (dispatch, getState) => {
-    const {
-      credentials: {token, login},
-      repos: {repos},
-    } = getState();
-    setAuth(token);
-
-    const updatedRepos = repos.map((repo) =>
-      repo.name === repoName ? {...repo, ...repoData, isUpdating: true} : repo
-    );
-    dispatch({type: FETCH_REPOS_SUCCESS, payload: updatedRepos});
-
     try {
-      await githubApi.updateRepo(login, repoName, repoData);
-      toast.info(`Репозиторий ${repoName} обновляется`, {autoClose: 30000});
-      setTimeout(() => {
-        dispatch(fetchRepos(login));
-        toast.success('Репозиторий  обновлён', {autoClose: 1000});
-      }, 30000);
+      const response = await githubApi.fetchRepos(login);
+      return response.data;
     } catch (error) {
-      toast.error("Ошибка при обновлении репозитория: " + error.message);
-      dispatch(fetchRepos(login));
+      toast.error('Ошибка загрузки репозиториев');
+      return rejectWithValue(error.message);
     }
-  };
-};
+  }
+);
 
-
-export const deleteRepo = (repoName) => {
-  return (dispatch, getState) => {
-    const { credentials: { login, token } } = getState();
+export const createRepo = createAsyncThunk(
+  'repos/createRepo',
+  async (repoData, { getState, dispatch, rejectWithValue }) => {
+    const { token, login } = getState().credentials;
     setAuth(token);
-    githubApi.deleteRepo(login, repoName)
-      .then(() => {
-        dispatch(fetchRepos());
-        toast.success('Репозиторий успешно удалён!');
-      })
-      .catch(error => {
-        alert("Ошибка при удалении репозитория: " + error.message);
-        toast.error("Ошибка при удалении репозитория: " + error.message);
-      });
-  };
-};
+    try {
+      const response = await githubApi.createRepo(repoData);
+      dispatch(addRepo(response.data));
+      toast.success('Репозиторий успешно создан!');
+    } catch (error) {
+      toast.error('Ошибка при создании репозитория');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateRepo = createAsyncThunk(
+  'repos/updateRepo',
+  async ({ repoName, repoData, login }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await githubApi.updateRepo(login, repoName, repoData);
+      dispatch(updateRepoLocal(response.data));
+      toast.success('Репозиторий успешно обновлён!');
+    } catch (error) {
+      toast.error('Ошибка при обновлении репозитория');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const deleteRepo = createAsyncThunk(
+  'repos/deleteRepo',
+  async (repoName,  { getState, dispatch, rejectWithValue }) => {
+    const { token, login } = getState().credentials;
+    setAuth(token);
+    try {
+      await githubApi.deleteRepo(login, repoName);
+      dispatch(removeRepo(repoName));
+      toast.success('Репозиторий успешно удалён!');
+    } catch (error) {
+      toast.error('Ошибка при удалении репозитория');
+      return rejectWithValue(error.message);
+    }
+  }
+);
