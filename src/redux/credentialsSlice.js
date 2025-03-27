@@ -10,7 +10,7 @@ const credentialsSlice = createSlice({
   initialState,
   reducers: {
     setCredentials(state, action) {
-      state.login = action.payload.login.trim();
+      state.login = action.payload.login;
       state.token = action.payload.token;
     },
     clearCredentials(state) {
