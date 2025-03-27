@@ -73,13 +73,12 @@ const RepoList = () => {
   }
 
   return (
-
     <Box sx={{ mt: 4 }}>
       <Typography variant="h4" gutterBottom>
         Список репозиториев
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="subtitle1" color="green">
+        <Typography variant="subtitle2" color="green">
           Ваш аккаунт: {login}
         </Typography>
       </Box>

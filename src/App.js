@@ -19,7 +19,7 @@ const App = () => {
       <Container maxWidth="md">
         <AppBar position="static">
           <Toolbar>
-            <Typography variant="h6" sx={{flexGrow: 1, borderRadius: 5}}>
+            <Typography variant="h6">
               GitHub Admin
             </Typography>
           </Toolbar>
