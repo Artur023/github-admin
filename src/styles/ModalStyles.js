@@ -1,6 +1,5 @@
 import {styled} from '@mui/material/styles';
-import {Box, Paper, Button, Typography} from '@mui/material';
-
+import {Box, Paper, Button} from '@mui/material';
 
 export const ModalOverlay = styled(Box)(({theme}) => ({
   position: 'fixed',
@@ -20,10 +19,6 @@ export const ModalPaper = styled(Paper)(({theme}) => ({
   width: '100%',
   maxWidth: 600,
   borderRadius: theme.shape.borderRadius,
-}));
-
-export const ModalText = styled(Typography)(({ theme }) => ({
-  marginBottom: theme.spacing(1),
 }));
 
 export const CloseButton = styled(Button)(({ theme }) => ({

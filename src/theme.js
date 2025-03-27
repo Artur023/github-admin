@@ -9,7 +9,7 @@ const theme = createTheme({
     background: { paper: '#fff', default: '#f5f5f5' },
   },
   typography: { fontFamily: 'Roboto, sans-serif' },
-  shape: { borderRadius: 4 },
+  shape: { borderRadius: 5 },
   spacing: 8,
 });
 

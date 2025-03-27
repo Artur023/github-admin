@@ -1,29 +1,43 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import CredentialsForm from './components/CredentialsForm';
 import RepoList from './components/RepoList';
-import { ToastContainer } from 'react-toastify';
+import {useSelector} from 'react-redux';
+import Container from '@mui/material/Container';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import 'react-toastify/dist/ReactToastify.css';
+import {ToastContainer} from 'react-toastify';
 
 const App = () => {
   const { login, token } = useSelector((state) => state.credentials);
-  const initialScreen = (login && token) ? 'repos' : 'credentials';
-  const [screen, setScreen] = useState(initialScreen);
+  const isLoggedIn = login && token;
 
   return (
-    <div className="container">
-      <nav>
-        <button className={'navButton'} onClick={() => setScreen('credentials')}>
-          Настройка GitHub
-        </button>
-        <button className={'navButton'} onClick={() => setScreen('repos')}>
-          Список репозиториев
-        </button>
-      </nav>
-      {screen === 'credentials' && <CredentialsForm />}
-      {screen === 'repos' && <RepoList />}
+    <BrowserRouter>
+      <Container maxWidth="md">
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" sx={{flexGrow: 1, borderRadius: 5}}>
+              GitHub Admin
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Routes>
+          <Route
+            path="/credentials"
+            element={isLoggedIn ? <Navigate to="/repos"/> : <CredentialsForm/>}
+          />
+          <Route
+            path="/repos"
+            element={isLoggedIn ? <RepoList/> : <Navigate to="/credentials"/>}
+          />
+          <Route path="*" element={<Navigate to={isLoggedIn ? "/repos" : "/credentials"}/>}/>
+        </Routes>
+      </Container>
       <ToastContainer position="top-right" autoClose={3000} />
-    </div>
+    </BrowserRouter>
   );
 };
 

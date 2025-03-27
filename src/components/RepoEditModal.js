@@ -1,21 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Typography } from '@mui/material';
+import { ModalOverlay, ModalPaper, CloseButton } from '../styles/ModalStyles';
 import RepoForm from './RepoForm';
 
 const RepoEditModal = ({ repo, onClose, onSubmit }) => {
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleSubmit = async (repoData) => {
+    setIsUpdating(true);
+    await onSubmit(repoData);
+    setIsUpdating(false);
+  };
+
+  const handleOverlayClick = () => {
+    onClose();
+  };
+
+  const handleContentClick = (e) => {
+    e.stopPropagation();
+  };
+
   if (!repo) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>Редактировать репозиторий: {repo.name}</h2>
-        <RepoForm
-          mode="update"
-          initialData={repo}
-          onSubmit={onSubmit}
-          onCancel={onClose}
-        />
-      </div>
-    </div>
+    <ModalOverlay onClick={handleOverlayClick}>
+      <ModalPaper onClick={handleContentClick}>
+        <Typography variant="h5" gutterBottom>
+          Редактировать репозиторий: {repo.name}
+        </Typography>
+        <RepoForm mode="update" initialData={repo} onSubmit={handleSubmit} onCancel={onClose} />
+        {isUpdating && <Typography variant="body2">Обновление...</Typography>}
+        <CloseButton variant="contained" onClick={onClose}>
+          Закрыть
+        </CloseButton>
+      </ModalPaper>
+    </ModalOverlay>
   );
 };
 

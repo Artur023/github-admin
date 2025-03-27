@@ -6,16 +6,21 @@ import RepoSortOptions from './RepoSortOptions';
 import RepoDetailModal from './RepoDetailModal';
 import RepoEditModal from './RepoEditModal';
 import RepoForm from './RepoForm';
+import DeleteConfirmationDialog from './DeleteConfirmationDialog';
+import { Box, Typography, Button, Paper, List } from '@mui/material';
 
 const RepoList = () => {
   const dispatch = useDispatch();
-  const { repos = [], loading, error } = useSelector((state) => state.repos);
+  const { repos, loading, error } = useSelector((state) => state.repos);
   const { login } = useSelector((state) => state.credentials);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editRepo, setEditRepo] = useState(null);
   const [viewRepo, setViewRepo] = useState(null);
   const [sortOption, setSortOption] = useState('date');
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [repoToDelete, setRepoToDelete] = useState(null);
 
   useEffect(() => {
     if (login && repos.length === 0) {
@@ -40,74 +45,82 @@ const RepoList = () => {
 
   const handleUpdateRepo = (repoData) => {
     if (editRepo) {
-      dispatch(updateRepo(editRepo.name, repoData));
+      dispatch(updateRepo({ repoName: editRepo.name, repoData, login }));
       setEditRepo(null);
     }
   };
 
-  const handleDeleteRepo = (repoName) => {
-    if (window.confirm(`Вы уверены, что хотите удалить репозиторий ${repoName}?`)) {
-      dispatch(deleteRepo(repoName));
+  const handleDeleteClick = (repoName) => {
+    setRepoToDelete(repoName);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (repoToDelete) {
+      dispatch(deleteRepo(repoToDelete));
     }
+    setDeleteDialogOpen(false);
+    setRepoToDelete(null);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setRepoToDelete(null);
   };
 
   if (!login) {
-    return <p>Пожалуйста, войдите, чтобы просмотреть репозитории.</p>;
+    return <Typography variant="body1">Пожалуйста, войдите, чтобы просмотреть репозитории.</Typography>;
   }
 
   return (
-    <div>
-      <h2>Список репозиториев</h2>
-      <div className="repo-header" style={{marginBottom: '20px'}}>
-        <span style={{marginRight: '10px', color: 'green'}}>Ваш аккаунт: {login}</span>
-      </div>
 
-      <RepoSortOptions sortOption={sortOption} onSortChange={setSortOption}/>
-      <button className={'navButton'} onClick={() => setShowCreateForm(true)}>
-        Создать репозиторий
-      </button>
+    <Box sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Список репозиториев
+      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Typography variant="subtitle1" color="green">
+          Ваш аккаунт: {login}
+        </Typography>
+      </Box>
+      <RepoSortOptions sortOption={sortOption} onSortChange={setSortOption} />
       {showCreateForm && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Создать репозиторий</h3>
-            <RepoForm
-              mode="create"
-              onSubmit={handleCreateRepo}
-              onCancel={() => setShowCreateForm(false)}
-            />
-          </div>
-        </div>
+        <Paper sx={{ p: 2, mb: 2 }}>
+          <Typography variant="h6">Создать репозиторий</Typography>
+          <RepoForm mode="create" onSubmit={handleCreateRepo} onCancel={() => setShowCreateForm(false)} />
+        </Paper>
       )}
-
-      {loading && <p>Загрузка...</p>}
-      {error && <p style={{color: 'red'}}>Ошибка: {error}</p>}
+      {loading && <Typography variant="body1">Загрузка...</Typography>}
+      {error && <Typography variant="body1" color="error">Ошибка: {error}</Typography>}
       {sortedRepos.length > 0 ? (
-        <ul className="repo-list">
+        <List>
+          <Box sx={{ mt: 2 }}>
+            <Button variant="contained" onClick={() => setShowCreateForm(true)}>
+              Создать репозиторий
+            </Button>
+          </Box>
           {sortedRepos.map((repo) => (
             <RepoItem
               key={repo.id}
               repo={repo}
-              onView={setViewRepo}
-              onEdit={setEditRepo}
-              onDelete={handleDeleteRepo}
+              onView={(r) => setViewRepo(r)}
+              onEdit={(r) => setEditRepo(r)}
+              onDelete={handleDeleteClick}
             />
           ))}
-        </ul>
+        </List>
       ) : (
-        !loading && <p>Репозитории не найдены</p>
+        !loading && <Typography variant="body1">Репозитории не найдены</Typography>
       )}
+      {viewRepo && <RepoDetailModal repo={viewRepo} onClose={() => setViewRepo(null)} />}
+      {editRepo && <RepoEditModal repo={editRepo} onClose={() => setEditRepo(null)} onSubmit={handleUpdateRepo} />}
 
-      {viewRepo && (
-        <RepoDetailModal repo={viewRepo} onClose={() => setViewRepo(null)}/>
-      )}
-      {editRepo && (
-        <RepoEditModal
-          repo={editRepo}
-          onClose={() => setEditRepo(null)}
-          onSubmit={handleUpdateRepo}
-        />
-      )}
-    </div>
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
+    </Box>
   );
 };
 
