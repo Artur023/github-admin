@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography, Button } from '@mui/material';
 import { ModalOverlay, ModalPaper, CloseButton } from '../styles/ModalStyles';
+import {RepoName} from "../styles/RepoItemStyles";
 
 const RepoDetailModal = ({ repo, onClose }) => {
   if (!repo) return null;
@@ -16,7 +17,9 @@ const RepoDetailModal = ({ repo, onClose }) => {
   return (
     <ModalOverlay onClick={handleOverlayClick}>
       <ModalPaper onClick={handleContentClick}>
-        <Typography variant="h5">{repo.name}</Typography>
+        <Typography variant="h5">
+          <RepoName>{repo.name}</RepoName>
+        </Typography>
         <Typography variant="body1">
           <strong>Описание:</strong> {repo.description || 'Отсутствует'}
         </Typography>

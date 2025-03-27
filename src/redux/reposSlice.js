@@ -11,9 +11,6 @@ const reposSlice = createSlice({
   name: 'repos',
   initialState,
   reducers: {
-    setRepos(state, action) {
-      state.repos = action.payload;
-    },
     addRepo(state, action) {
       state.repos.push(action.payload);
     },
@@ -47,7 +44,6 @@ const reposSlice = createSlice({
 });
 
 export const {
-  setRepos,
   addRepo,
   updateRepoLocal,
   removeRepo

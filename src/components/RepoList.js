@@ -8,6 +8,7 @@ import RepoEditModal from './RepoEditModal';
 import RepoForm from './RepoForm';
 import DeleteConfirmationDialog from './DeleteConfirmationDialog';
 import { Box, Typography, Button, Paper, List } from '@mui/material';
+import {clearCredentials} from "../redux/credentialsSlice";
 
 const RepoList = () => {
   const dispatch = useDispatch();
@@ -74,30 +75,35 @@ const RepoList = () => {
 
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Список репозиториев
-      </Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="subtitle2" color="green">
+      <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center'}}>
+        <Typography variant="subtitle1" color="green">
           Ваш аккаунт: {login}
         </Typography>
+        <Button variant="outlined" onClick={() => dispatch(clearCredentials())}>
+          Сменить учётные данные
+        </Button>
       </Box>
       <RepoSortOptions sortOption={sortOption} onSortChange={setSortOption} />
       {showCreateForm && (
         <Paper sx={{ p: 2, mb: 2 }}>
-          <Typography variant="h6">Создать репозиторий</Typography>
+          <Typography variant="h6" gutterBottom>
+            Создать репозиторий
+          </Typography>
           <RepoForm mode="create" onSubmit={handleCreateRepo} onCancel={() => setShowCreateForm(false)} />
         </Paper>
+      )}
+
+      {!showCreateForm && (
+        <Box sx={{mb: 2}}>
+          <Button variant="contained" onClick={() => setShowCreateForm(true)}>
+            Создать репозиторий
+          </Button>
+        </Box>
       )}
       {loading && <Typography variant="body1">Загрузка...</Typography>}
       {error && <Typography variant="body1" color="error">Ошибка: {error}</Typography>}
       {sortedRepos.length > 0 ? (
         <List>
-          <Box sx={{ mt: 2 }}>
-            <Button variant="contained" onClick={() => setShowCreateForm(true)}>
-              Создать репозиторий
-            </Button>
-          </Box>
           {sortedRepos.map((repo) => (
             <RepoItem
               key={repo.id}

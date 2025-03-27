@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Typography } from '@mui/material';
 import { ModalOverlay, ModalPaper, CloseButton } from '../styles/ModalStyles';
 import RepoForm from './RepoForm';
+import {RepoName} from "../styles/RepoItemStyles";
 
 const RepoEditModal = ({ repo, onClose, onSubmit }) => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -26,7 +27,7 @@ const RepoEditModal = ({ repo, onClose, onSubmit }) => {
     <ModalOverlay onClick={handleOverlayClick}>
       <ModalPaper onClick={handleContentClick}>
         <Typography variant="h5" gutterBottom>
-          Редактировать репозиторий: {repo.name}
+          Редактировать репозиторий: <RepoName>{repo.name}</RepoName>
         </Typography>
         <RepoForm mode="update" initialData={repo} onSubmit={handleSubmit} onCancel={onClose} />
         {isUpdating && <Typography variant="body2">Обновление...</Typography>}

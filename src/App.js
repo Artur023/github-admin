@@ -6,9 +6,10 @@ import {useSelector} from 'react-redux';
 import Container from '@mui/material/Container';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import 'react-toastify/dist/ReactToastify.css';
 import {ToastContainer} from 'react-toastify';
+import {Typography} from "@mui/material";
 
 const App = () => {
   const { login, token } = useSelector((state) => state.credentials);
@@ -19,7 +20,12 @@ const App = () => {
       <Container maxWidth="md">
         <AppBar position="static">
           <Toolbar>
-            <Typography variant="h6">
+            <Typography variant="h6" sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+            }}>
+              <GitHubIcon/>
               GitHub Admin
             </Typography>
           </Toolbar>
