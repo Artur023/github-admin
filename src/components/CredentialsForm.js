@@ -18,7 +18,7 @@ const CredentialsForm = () => {
       token: '',
     },
     validationSchema: Yup.object({
-      login: Yup.string().trim().required('Пожалуйста, введите логин'),
+      login: Yup.string().required('Пожалуйста, введите логин'),
       token: Yup.string().required('Пожалуйста, введите токен'),
     }),
     onSubmit: async (values) => {
@@ -28,15 +28,18 @@ const CredentialsForm = () => {
           headers: { Authorization: `token ${values.token}` },
         });
         const fetchedLogin = response.data.login;
-        if (values.login.trim().toLowerCase() !== fetchedLogin.toLowerCase()) {
+
+
+        if (values.login.toLowerCase() !== fetchedLogin.toLowerCase()) {
+
           toast.error(
-            `Введённый логин (${values.login.trim()}) не соответствует токену. Правильный логин: ${fetchedLogin}.`
+            `Введённый логин (${values.login}) не соответствует токену. Правильный логин: ${fetchedLogin}.`
           );
           setLoading(false);
           return;
         }
-        dispatch(setCredentials({ login: values.login.trim(), token: values.token }));
-        toast.success(`Вы успешно вошли, ${values.login.trim()}`);
+        dispatch(setCredentials({login: values.login, token: values.token}));
+        toast.success(`Вы успешно вошли, ${values.login}`);
       } catch (error) {
         toast.error('Неверный токен или ошибка при получении данных пользователя.');
       }
@@ -70,7 +73,13 @@ const CredentialsForm = () => {
         name="login"
         value={formik.values.login}
         onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
+        onBlur={(e) => {
+          {
+            console.log(e)
+          }
+          formik.setFieldValue('login', e.target.value.trim());
+          formik.handleBlur(e);
+        }}
         error={formik.touched.login && Boolean(formik.errors.login)}
         helperText={formik.touched.login && formik.errors.login}
         required
