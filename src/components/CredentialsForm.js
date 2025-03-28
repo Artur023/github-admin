@@ -28,8 +28,6 @@ const CredentialsForm = () => {
           headers: { Authorization: `token ${values.token}` },
         });
         const fetchedLogin = response.data.login;
-
-
         if (values.login.toLowerCase() !== fetchedLogin.toLowerCase()) {
 
           toast.error(
@@ -74,9 +72,6 @@ const CredentialsForm = () => {
         value={formik.values.login}
         onChange={formik.handleChange}
         onBlur={(e) => {
-          {
-            console.log(e)
-          }
           formik.setFieldValue('login', e.target.value.trim());
           formik.handleBlur(e);
         }}
@@ -97,7 +92,7 @@ const CredentialsForm = () => {
         required
       />
       <Button type="submit" variant="contained" disabled={loading}>
-        {loading ? 'Проверка...' : 'Сохранить'}
+        {loading ? 'Проверка...' : 'Войти'}
       </Button>
     </Box>
   );
